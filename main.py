@@ -5,34 +5,33 @@ from lift import *
 from liftPanel import *
 from requestArrow import *
 
-screenWidth = 0
-screenHeight = 0
-shiftParameter = 250
-floorHeight = 108
-liftParameter = 972
-
+screen_width = 0
+screen_height = 0
+shift_parameter = 250
+floor_height = 108
+lift_parameter = 972
 
 class ElevatorApp():
     def __init__(self,root):
-        global screenWidth,screenHeight
+        global screen_width,screen_height
         self.root = root
         self.root.title("Elevator Simulation System")
-        self.canvas = Canvas(self.root, width = screenWidth, height = screenHeight, bg = "white")
+        self.canvas = Canvas(self.root, width = screen_width, height = screen_height, bg = "white")
         self.canvas.pack()
         
         #Vertical Lines
         for i in range(5):
-            self.canvas.create_line(i*shiftParameter, 0, i*shiftParameter, screenHeight, fill = "black",tags = "line")
+            self.canvas.create_line(i*shift_parameter, 0, i*shift_parameter, screen_height, fill = "black",tags = "line")
 
         #Horizontal Lines
         for i in range(9):
-            self.canvas.create_line(0, (i+1)*floorHeight, 4*shiftParameter, (i+1)*floorHeight, fill = "black",tags = "line")
+            self.canvas.create_line(0, (i+1)*floor_height, 4*shift_parameter, (i+1)*floor_height, fill = "black",tags = "line")
 
         self.draw_lifts(self.canvas)
 
         #Floor Labelling
         for i in range(10):
-            self.canvas.create_text(20, 30+i*floorHeight, anchor=W, font="Purisa",text="Floor No. "+str(10-i))
+            self.canvas.create_text(20, 30+i*floor_height, anchor=W, font="Purisa",text="Floor No. "+str(10-i))
         
         #liftPanelOuterBoxes
         self.draw_panels(self.canvas)
@@ -51,39 +50,72 @@ class ElevatorApp():
         self.draw_requestArrow(self.canvas)
         
     def draw_lifts(self,canvas):
-        self.liftList = []
+        self.lift_list = []
         for k in range(4):
-            self.liftList.append(Lift(k*shiftParameter, liftParameter, (k+1)*shiftParameter, liftParameter+floorHeight,canvas,k+1))
+            self.lift_list.append(Lift(k*shift_parameter, lift_parameter, (k+1)*shift_parameter, lift_parameter+floor_height,canvas,k+1))
     
     def draw_panels(self,canvas):
         for i in range (4):
-            LiftPanel(i,self.canvas) 
+            LiftPanel(i,self.canvas,self) 
 
     def draw_requestArrow(self,canvas):
         for i in range(10):
-            Arrow(1030, i*floorHeight+40, 1070, i*floorHeight+40, 1050,i*floorHeight+10,canvas,10-i,"up",self)
-            Arrow(1030, i*floorHeight+50, 1070, i*floorHeight+50, 1050,i*floorHeight+80,canvas,10-i,"down",self)
+            Arrow(1030, i*floor_height+40, 1070, i*floor_height+40, 1050,i*floor_height+10,canvas,10-i,"up",self)
+            Arrow(1030, i*floor_height+50, 1070, i*floor_height+50, 1050,i*floor_height+80,canvas,10-i,"down",self)
 
-    def floorRequest(self,floor_number):
-        print "Request for floor number "+floor_number+" has been made"
+    def simulate(self):
 
-        for lift in self.liftList:
+        for lift in self.lift_list:
+            lift.update()
+
+        self.root.after(40,self.simulate)
+
+    def floorRequest(self,floor_number,direction):
+        print "Request for floor number "+str(floor_number)+" has been made"
+
+        for lift in self.lift_list:
             if(lift.curr_floor == floor_number):
-                lift.addFloorRequest(floor_number)
-                print "LIFT ON SAME FLOOR AS REQUESTED" + lift.lift_number
+                lift.addFloorRequest(floor_number,direction)
+                print "Lift on the same floor as requested " + str(lift.lift_number)
                 return
+
+        for lift in self.lift_list:
+            if (lift.state == "moving" or lift.state == "opening" or lift.state == "closing" or lift.state == "open") and lift.direction == "up" and lift.curr_floor < floor_number:
+                lift.addFloorRequest(floor_number, direction)
+                print "This lift is on the way and picked up other passengers too "+ str(lift.lift_number)
+                return
+            elif (lift.state == "moving" or lift.state == "opening" or lift.state == "closing" or lift.state == "open") and lift.direction == "down" and lift.curr_floor > floor_number:
+                lift.addFloorRequest(floor_number, direction)
+                print "This lift is moving and on the way catch up other persons too " + str(lift.lift_number)
+                return
+
+        min_distance = 10
+        assigned_elevator = None
+
+        for lift in self.lift_list:
+            if lift.state == "idle":
+                if abs(lift.curr_floor - floor_number)<min_distance:
+                    assigned_elevator = lift
+                    min_distance = lift.curr_floor - floor_number
+
+        if not(assigned_elevator == None):
+            assigned_elevator.addFloorRequest(floor_number,direction)
+            print "All lift were idle so nearest lift is find out and send"
+            return
+
 
 def main():
 
     root = Tk()
     posx = 0
     posy = 0
-    global screenWidth
-    global screenHeight
-    screenWidth = root.winfo_screenwidth()
-    screenHeight = root.winfo_screenheight()
-    root.wm_geometry("%dx%d+%d+%d" % (screenWidth, screenHeight, posx, posy))
+    global screen_width
+    global screen_height
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    root.wm_geometry("%dx%d+%d+%d" % (screen_width, screen_height, posx, posy))
     app = ElevatorApp(root)
+    app.simulate()
     root.mainloop()
 
 
