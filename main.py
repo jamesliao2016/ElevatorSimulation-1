@@ -52,8 +52,8 @@ class ElevatorApp():
         
     def draw_lifts(self,canvas):
         self.liftList = []
-        for i in range(4):
-            self.liftList.append(Lift(i*shiftParameter, liftParameter, (i+1)*shiftParameter, liftParameter+floorHeight,canvas))
+        for k in range(4):
+            self.liftList.append(Lift(k*shiftParameter, liftParameter, (k+1)*shiftParameter, liftParameter+floorHeight,canvas,k+1))
     
     def draw_panels(self,canvas):
         for i in range (4):
@@ -61,9 +61,17 @@ class ElevatorApp():
 
     def draw_requestArrow(self,canvas):
         for i in range(10):
-            Arrow(1030, i*floorHeight+40, 1070, i*floorHeight+40, 1050,i*floorHeight+10,canvas)
-            Arrow(1030, i*floorHeight+50, 1070, i*floorHeight+50, 1050,i*floorHeight+80,canvas)
+            Arrow(1030, i*floorHeight+40, 1070, i*floorHeight+40, 1050,i*floorHeight+10,canvas,10-i,"up",self)
+            Arrow(1030, i*floorHeight+50, 1070, i*floorHeight+50, 1050,i*floorHeight+80,canvas,10-i,"down",self)
 
+    def floorRequest(self,floor_number):
+        print "Request for floor number "+floor_number+" has been made"
+
+        for lift in self.liftList:
+            if(lift.curr_floor == floor_number):
+                lift.addFloorRequest(floor_number)
+                print "LIFT ON SAME FLOOR AS REQUESTED" + lift.lift_number
+                return
 
 def main():
 
