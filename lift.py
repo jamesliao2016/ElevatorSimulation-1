@@ -14,6 +14,7 @@ class Lift():
         self.coords_door = (x0,y0,x0,y1)
         self.body = self.canvas.create_rectangle(self.coords, outline="black", fill="#1e90ff")
         self.door = self.canvas.create_rectangle(self.coords_door, outline="black", fill="#7cbb00")
+        self.overLoaded = False
         self.state = "idle"
         self.request_queue = []
         
@@ -31,6 +32,11 @@ class Lift():
         self.x = self.canvas.coords(self.body)[0]
 
     def update(self):
+
+        if self.person_count>10:
+            self.overLoaded = True
+        else:
+            self.overLoaded = False
 
         if self.state == "idle":
             self.checkRequestQueue()
@@ -63,13 +69,13 @@ class Lift():
         #print self.state + str(self.lift_number)
         if self.state == "idle":
             for i in range(11):
-                if self.request_queue[i] == 1 and self.curr_floor<=i:
+                if self.request_queue[i] == 1 and self.curr_floor<=i and not self.overLoaded:
                     self.destination = i
                     self.vel = -self.lift_speed
                     self.direction = "up"
                     self.state = "moving"
                     break
-                elif self.request_queue[i] == 1 and self.curr_floor>i:
+                elif self.request_queue[i] == 1 and self.curr_floor>i and not self.overLoaded:
                     self.destination = i
                     self.vel = self.lift_speed
                     self.direction = "down"

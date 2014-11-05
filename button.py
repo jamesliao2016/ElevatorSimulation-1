@@ -17,5 +17,14 @@ class Button():
         
 
     def request(self,event,floor_number):
-        self.main.lift_list[self.lift_number].addFloorRequest(floor_number,"up")
+        if floor_number == "<>":
+            if self.main.lift_list[self.lift_number].state == "closing" or self.main.lift_list[self.lift_number].state == "idle":
+                self.main.lift_list[self.lift_number].state = "opening"
+
+        elif floor_number == "><":
+            if self.main.lift_list[self.lift_number].state == "opening" or self.main.lift_list[self.lift_number].state == "open":
+               self.main.lift_list[self.lift_number].state = "closing"
+
+        else:    
+            self.main.lift_list[self.lift_number].addFloorRequest(floor_number,"up")
 

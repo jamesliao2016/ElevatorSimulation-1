@@ -5,6 +5,7 @@ from lift import *
 from liftPanel import *
 from requestArrow import *
 from display import *
+from alertBox import *
 
 screen_width = 0
 screen_height = 0
@@ -38,25 +39,33 @@ class ElevatorApp():
         self.draw_panels(self.canvas)
 
         #alertBoxes
-        self.canvas.create_rectangle(1200, 610, 1400, 750, outline="#000", fill="white")
-        self.canvas.create_text(1250, 630, anchor=W, fill="red", font="Purisa",text="Alert Lift 1")
-        self.canvas.create_rectangle(1500, 610, 1700, 750, outline="#000", fill="white")
-        self.canvas.create_text(1550, 630, anchor=W, fill="red", font="Purisa",text="Alert Lift 2")
-        self.canvas.create_rectangle(1200, 770, 1400, 910, outline="#000", fill="white")
-        self.canvas.create_text(1250, 790, anchor=W, fill="red", font="Purisa",text="Alert Lift 3")
-        self.canvas.create_rectangle(1500, 770, 1700, 910, outline="#000", fill="white")
-        self.canvas.create_text(1550, 790, anchor=W, fill="red", font="Purisa",text="Alert Lift 4")
-   
+
+        Alert(1200, 610, 1400, 750, self.canvas,self,1) 
+        Alert(1500, 610, 1700, 750, self.canvas,self,2)
+        Alert(1200, 770, 1400, 910, self.canvas,self,3)
+        Alert(1500, 770, 1700, 910, self.canvas,self,4)
+        
+        #draw Alert Boxes
+        self.draw_alert_box()
+        
         #draw Request Arrow
         self.draw_requestArrow(self.canvas)
 
         #draw Display Panel
         self.draw_display(self.canvas)
         
+    def draw_alert_box(self):
+        self.alert_box_list = []
+        
+        self.alert_box_list.append(Alert(1200, 610, 1400, 750, self.canvas,self,1)) 
+        self.alert_box_list.append(Alert(1500, 610, 1700, 750, self.canvas,self,2))
+        self.alert_box_list.append(Alert(1200, 770, 1400, 910, self.canvas,self,3))
+        self.alert_box_list.append(Alert(1500, 770, 1700, 910, self.canvas,self,4))
+
     def draw_display(self,canvas):
         self.display_box = []
         for i in range (10):
-            self.display_box.append(Display(1100, 30+i*108, 1150, 70+i*108, canvas,self))    
+            self.display_box.append(Display(1100, 30+i*108, 1180, 70+i*108, canvas,self))    
 
     def draw_lifts(self,canvas):
         self.lift_list = []
@@ -80,6 +89,9 @@ class ElevatorApp():
         for t in self.display_box:
             t.update()
 
+        for a in self.alert_box_list:
+            a.update()
+
         self.root.after(10,self.simulate)
 
     def floorRequest(self,floor_number,direction):
@@ -92,11 +104,11 @@ class ElevatorApp():
                 return
 
         for lift in self.lift_list:
-            if (lift.state == "moving" or lift.state == "opening" or lift.state == "closing" or lift.state == "open") and lift.direction == "up" and lift.curr_floor < floor_number:
+            if (lift.state == "moving" or lift.state == "opening" or lift.state == "closing" or lift.state == "open") and lift.direction == "up" and lift.curr_floor < floor_number and not lift.overLoaded:
                 lift.addFloorRequest(floor_number, direction)
                 print "This lift is on the way and picked up other passengers too "+ str(lift.lift_number)
                 return
-            elif (lift.state == "moving" or lift.state == "opening" or lift.state == "closing" or lift.state == "open") and lift.direction == "down" and lift.curr_floor > floor_number:
+            elif (lift.state == "moving" or lift.state == "opening" or lift.state == "closing" or lift.state == "open") and lift.direction == "down" and lift.curr_floor > floor_number and not lift.overLoaded:
                 lift.addFloorRequest(floor_number, direction)
                 print "This lift is moving and on the way catch up other persons too " + str(lift.lift_number)
                 return
@@ -106,7 +118,7 @@ class ElevatorApp():
 
         for lift in self.lift_list:
             if lift.state == "idle":
-                if abs(lift.curr_floor - floor_number)<min_distance:
+                if abs(lift.curr_floor - floor_number)<min_distance and not lift.overLoaded:
                     assigned_elevator = lift
                     min_distance = lift.curr_floor - floor_number
 
