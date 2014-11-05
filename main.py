@@ -4,6 +4,7 @@ import math
 from lift import *
 from liftPanel import *
 from requestArrow import *
+from display import *
 
 screen_width = 0
 screen_height = 0
@@ -45,14 +46,22 @@ class ElevatorApp():
         self.canvas.create_text(1250, 790, anchor=W, fill="red", font="Purisa",text="Alert Lift 3")
         self.canvas.create_rectangle(1500, 770, 1700, 910, outline="#000", fill="white")
         self.canvas.create_text(1550, 790, anchor=W, fill="red", font="Purisa",text="Alert Lift 4")
-        
+   
         #draw Request Arrow
         self.draw_requestArrow(self.canvas)
+
+        #draw Display Panel
+        self.draw_display(self.canvas)
         
+    def draw_display(self,canvas):
+        self.display_box = []
+        for i in range (10):
+            self.display_box.append(Display(1100, 30+i*108, 1150, 70+i*108, canvas,self))    
+
     def draw_lifts(self,canvas):
         self.lift_list = []
         for k in range(4):
-            self.lift_list.append(Lift(k*shift_parameter, lift_parameter, (k+1)*shift_parameter, lift_parameter+floor_height,canvas,k+1))
+            self.lift_list.append(Lift(k*shift_parameter, lift_parameter, (k+1)*shift_parameter, lift_parameter+floor_height,canvas,k+1,self))
     
     def draw_panels(self,canvas):
         for i in range (4):
@@ -67,6 +76,9 @@ class ElevatorApp():
 
         for lift in self.lift_list:
             lift.update()
+
+        for t in self.display_box:
+            t.update()
 
         self.root.after(10,self.simulate)
 

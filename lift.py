@@ -6,12 +6,14 @@ floor_height = 108
 
 class Lift():
 
-    def __init__(self,x0,y0,x1,y1,canvas,lift_number):
+    def __init__(self,x0,y0,x1,y1,canvas,lift_number,main):
         self.canvas = canvas
+        self.main = main
         self.lift_number = lift_number
         self.coords = (x0,y0,x1,y1)
+        self.coords_door = (x0,y0,x0,y1)
         self.body = self.canvas.create_rectangle(self.coords, outline="black", fill="#1e90ff")
-        self.door = self.canvas.create_rectangle(self.coords, outline="black", fill="#7cbb00")
+        self.door = self.canvas.create_rectangle(self.coords_door, outline="black", fill="#7cbb00")
         self.state = "idle"
         self.request_queue = []
         
@@ -51,6 +53,11 @@ class Lift():
 
     def addFloorRequest(self,floor,direction):
         self.request_queue[floor] = 1
+        self.setElevator(floor)
+
+    def setElevator(self,floor):
+
+        self.main.display_box[10-floor].elevator_assigned = self
 
     def checkRequestQueue(self):
         #print self.state + str(self.lift_number)
@@ -84,12 +91,18 @@ class Lift():
         #print self.curr_floor
 
         if self.curr_floor == self.destination:
+            self.main.display_box[10-self.destination].elevator_assigned = None
             self.request_queue[self.destination] = 0
             self.state = "opening"
             self.vel = 0
 
 
     def moveLift(self):
+        if self.vel < 0:
+            self.direction = "up"
+        elif self.vel > 0:
+            self.direction = "down"
+
         self.canvas.move(self.body,0,self.vel)
         self.canvas.move(self.door,0,self.vel)
         self.x = self.canvas.coords(self.body)[0]
