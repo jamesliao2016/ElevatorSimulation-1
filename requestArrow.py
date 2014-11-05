@@ -14,7 +14,7 @@ class Arrow():
         self.canvas.tag_bind(self.body,'<Button-1>', lambda x: self.request(1))
 
     def request(self,event):
-        self.main.floorRequest(self.floor_number)
+        self.main.floorRequest(self.floor_number,self.direction)
 
 
 

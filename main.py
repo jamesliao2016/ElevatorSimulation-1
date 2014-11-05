@@ -68,7 +68,7 @@ class ElevatorApp():
         for lift in self.lift_list:
             lift.update()
 
-        self.root.after(40,self.simulate)
+        self.root.after(10,self.simulate)
 
     def floorRequest(self,floor_number,direction):
         print "Request for floor number "+str(floor_number)+" has been made"
@@ -100,7 +100,7 @@ class ElevatorApp():
 
         if not(assigned_elevator == None):
             assigned_elevator.addFloorRequest(floor_number,direction)
-            print "All lift were idle so nearest lift is find out and send"
+            print "All lift were idle so nearest lift is find out and send "+ str(assigned_elevator.lift_number)
             return
 
 

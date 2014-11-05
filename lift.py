@@ -53,6 +53,7 @@ class Lift():
         self.request_queue[floor] = 1
 
     def checkRequestQueue(self):
+        #print self.state + str(self.lift_number)
         if self.state == "idle":
             for i in range(11):
                 if self.request_queue[i] == 1 and self.curr_floor<=i:
@@ -61,7 +62,7 @@ class Lift():
                     self.direction = "up"
                     self.state = "moving"
                     break
-                elif self.request_queue == 1 and self.curr_floor>i:
+                elif self.request_queue[i] == 1 and self.curr_floor>i:
                     self.destination = i
                     self.vel = self.lift_speed
                     self.direction = "down"
@@ -79,11 +80,11 @@ class Lift():
                     break
 
     def checkDestination(self):
-        self.curr_floor = int(10-math.floor((self.y+108)/108))
+        self.curr_floor = float(10-float((self.y)/108))
         #print self.curr_floor
 
         if self.curr_floor == self.destination:
-            self.request_queue[self.curr_floor] = 0
+            self.request_queue[self.destination] = 0
             self.state = "opening"
             self.vel = 0
 
@@ -96,27 +97,23 @@ class Lift():
 
     def openDoor(self):
         if self.door_status == 250:
-            self.status = "open"
+            self.state = "open"
         else:
             self.door_status += 2
             self.canvas.coords(self.door,self.x,self.y,self.x+self.door_status,self.y+floor_height)
 
 
-    def keepOpenDoor(self):
+    def keepDoorOpen(self):
         if self.open_status == 100:
-            self.status = "closing"
+            self.state = "closing"
             self.open_status = 0
         else:
             self.open_status += 5
 
     def closeDoor(self):
+
         if self.door_status == 0:
-            self.status = "idle"
+            self.state = "idle"
         else:
             self.door_status -= 2
             self.canvas.coords(self.door,self.x,self.y,self.x+self.door_status,self.y+floor_height)
-
-            
-
-
-
