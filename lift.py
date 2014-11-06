@@ -98,10 +98,12 @@ class Lift():
 
         if self.curr_floor == self.destination:
             self.main.display_box[10-self.destination].elevator_assigned = None
+            self.main.up_arrow_list[10-self.destination].turnOff()
+            self.main.down_arrow_list[10-self.destination].turnOff()
             self.request_queue[self.destination] = 0
             self.state = "opening"
             self.vel = 0
-
+        
 
     def moveLift(self):
         if self.vel < 0:
@@ -123,7 +125,7 @@ class Lift():
 
 
     def keepDoorOpen(self):
-        if self.open_status == 100:
+        if self.open_status == 500:
             self.state = "closing"
             self.open_status = 0
         else:

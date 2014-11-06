@@ -77,9 +77,12 @@ class ElevatorApp():
             LiftPanel(i,self.canvas,self) 
 
     def draw_requestArrow(self,canvas):
+        self.up_arrow_list = []
+        self.down_arrow_list = []
         for i in range(10):
-            Arrow(1030, i*floor_height+40, 1070, i*floor_height+40, 1050,i*floor_height+10,canvas,10-i,"up",self)
-            Arrow(1030, i*floor_height+50, 1070, i*floor_height+50, 1050,i*floor_height+80,canvas,10-i,"down",self)
+            self.up_arrow_list.append(Arrow(1030, i*floor_height+40, 1070, i*floor_height+40, 1050,i*floor_height+10,canvas,10-i,"up",self))
+            self.down_arrow_list.append(Arrow(1030, i*floor_height+50, 1070, i*floor_height+50, 1050,i*floor_height+80,canvas,10-i,"down",self))
+            
 
     def simulate(self):
 
@@ -97,25 +100,29 @@ class ElevatorApp():
     def floorRequest(self,floor_number,direction):
         print "Request for floor number "+str(floor_number)+" has been made"
 
+        assigned_elevator = None
+
         for lift in self.lift_list:
-            if(lift.curr_floor == floor_number):
+            if(lift.curr_floor == floor_number and not lift.overLoaded):
+                assigned_elevator = lift
                 lift.addFloorRequest(floor_number,direction)
                 print "Lift on the same floor as requested " + str(lift.lift_number)
                 return
 
         for lift in self.lift_list:
             if (lift.state == "moving" or lift.state == "opening" or lift.state == "closing" or lift.state == "open") and lift.direction == "up" and lift.curr_floor < floor_number and not lift.overLoaded:
+                assigned_elevator = lift
                 lift.addFloorRequest(floor_number, direction)
                 print "This lift is on the way and picked up other passengers too "+ str(lift.lift_number)
                 return
             elif (lift.state == "moving" or lift.state == "opening" or lift.state == "closing" or lift.state == "open") and lift.direction == "down" and lift.curr_floor > floor_number and not lift.overLoaded:
+                assigned_elevator = lift
                 lift.addFloorRequest(floor_number, direction)
                 print "This lift is moving and on the way catch up other persons too " + str(lift.lift_number)
                 return
 
         min_distance = 10
-        assigned_elevator = None
-
+        
         for lift in self.lift_list:
             if lift.state == "idle":
                 if abs(lift.curr_floor - floor_number)<min_distance and not lift.overLoaded:
@@ -125,6 +132,18 @@ class ElevatorApp():
         if not(assigned_elevator == None):
             assigned_elevator.addFloorRequest(floor_number,direction)
             print "All lift were idle so nearest lift is find out and send "+ str(assigned_elevator.lift_number)
+            return
+
+        min_person = 10000000000
+        if assigned_elevator == None:
+            for lift in self.lift_list:
+                if lift.person_count<min_person:
+                    min_person = lift.person_count
+                    assigned_elevator = lift
+
+        if not(assigned_elevator == None):
+            assigned_elevator.addFloorRequest(floor_number,direction)
+            print "All lift were full so lift with minimum number of person was picked and assigined "+ str(assigned_elevator.lift_number)
             return
 
 
