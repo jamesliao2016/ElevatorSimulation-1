@@ -73,8 +73,9 @@ class ElevatorApp():
             self.lift_list.append(Lift(k*shift_parameter, lift_parameter, (k+1)*shift_parameter, lift_parameter+floor_height,canvas,k+1,self))
     
     def draw_panels(self,canvas):
+        self.lift_panel_list = []
         for i in range (4):
-            LiftPanel(i,self.canvas,self) 
+            self.lift_panel_list.append(LiftPanel(i,self.canvas,self)) 
 
     def draw_requestArrow(self,canvas):
         self.up_arrow_list = []

@@ -7,6 +7,7 @@ class LiftPanel():
     def __init__(self,i,canvas,main):
         self.canvas = canvas
         self.main = main
+        self.button_list = []
 
         if i%2==0:
             if(int(i/2)==0):#Lift Number 1
@@ -26,10 +27,10 @@ class LiftPanel():
                 for i in range(3):
                     for j in range(3):
                         coords = (1220+j*50, 70+i*50, 1260+j*50, 110+i*50)
-                        Button(coords,self.lift_number,3*i+1*(j+1),self.main,self.canvas)
+                        self.button_list.append(Button(coords,self.lift_number,3*i+1*(j+1),self.main,self.canvas))
 
                 coords = (1220, 220, 1260, 260)
-                Button(coords,self.lift_number,10,self.main,self.canvas)
+                self.button_list.append(Button(coords,self.lift_number,10,self.main,self.canvas))
                 coords = (1270, 220, 1310, 260)
                 Button(coords,self.lift_number,"<>",self.main,self.canvas)
                 coords = (1320, 220, 1360, 260)
@@ -53,10 +54,10 @@ class LiftPanel():
                 for i in range(3):
                     for j in range(3):
                         coords = (1220+j*50, 370+i*50, 1260+j*50, 410+i*50)
-                        Button(coords,self.lift_number,3*i+1*(j+1),self.main,self.canvas)
+                        self.button_list.append(Button(coords,self.lift_number,3*i+1*(j+1),self.main,self.canvas))
 
                 coords = (1220, 520, 1260, 560)
-                Button(coords,self.lift_number,10,self.main,self.canvas)
+                self.button_list.append(Button(coords,self.lift_number,10,self.main,self.canvas))
                 coords = (1270, 520, 1310, 560)
                 Button(coords,self.lift_number,"<>",self.main,self.canvas)
                 coords = (1320, 520, 1360, 560)
@@ -80,10 +81,10 @@ class LiftPanel():
                 for i in range(3):
                     for j in range(3):
                         coords = (1520+j*50, 70+i*50, 1560+j*50, 110+i*50)
-                        Button(coords,self.lift_number,3*i+1*(j+1),self.main,self.canvas)
+                        self.button_list.append(Button(coords,self.lift_number,3*i+1*(j+1),self.main,self.canvas))
 
                 coords = (1520, 220, 1560, 260)
-                Button(coords,self.lift_number,10,self.main,self.canvas)
+                self.button_list.append(Button(coords,self.lift_number,10,self.main,self.canvas))
                 coords = (1570, 220, 1610, 260)
                 Button(coords,self.lift_number,"<>",self.main,self.canvas)
                 coords = (1620, 220, 1660, 260)
@@ -107,10 +108,10 @@ class LiftPanel():
                 for i in range(3):
                     for j in range(3):
                         coords = (1520+j*50, 370+i*50, 1560+j*50, 410+i*50)
-                        Button(coords,self.lift_number,3*i+1*(j+1),self.main,self.canvas)
+                        self.button_list.append(Button(coords,self.lift_number,3*i+1*(j+1),self.main,self.canvas))
 
                 coords = (1520, 520, 1560, 560)
-                Button(coords,self.lift_number,10,self.main,self.canvas)
+                self.button_list.append(Button(coords,self.lift_number,10,self.main,self.canvas))
                 coords = (1570, 520, 1610, 560)
                 Button(coords,self.lift_number,"<>",self.main,self.canvas)
                 coords = (1620, 520, 1660, 560)

@@ -27,4 +27,10 @@ class Button():
 
         else:    
             self.main.lift_list[self.lift_number].addFloorRequest(floor_number,"up")
+            self.canvas.itemconfigure(self.body, fill = "#b0a593")
+            self.status = "on"
+
+    def turnOff(self):
+        self.canvas.itemconfigure(self.body, fill = "white")
+        self.status = "off"
 

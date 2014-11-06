@@ -98,6 +98,7 @@ class Lift():
 
         if self.curr_floor == self.destination:
             self.main.display_box[10-self.destination].elevator_assigned = None
+            self.main.lift_panel_list[self.lift_number-1].button_list[self.destination-1].turnOff()
             self.main.up_arrow_list[10-self.destination].turnOff()
             self.main.down_arrow_list[10-self.destination].turnOff()
             self.request_queue[self.destination] = 0
