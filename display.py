@@ -15,7 +15,7 @@ class Display():
     def update(self):
         if not(self.elevator_assigned == None):
 
-            if self.elevator_assigned.state == "moving":
+            if self.elevator_assigned.state == "moving" or self.elevator_assigned.state == "opening" or self.elevator_assigned.state == "open" or self.elevator_assigned.state == "closing":
                 self.canvas.itemconfigure(self.display_floor, text=str(int(math.ceil(self.elevator_assigned.curr_floor)))+" "+ self.elevator_assigned.direction)
             else:
                 self.canvas.itemconfigure(self.display_floor, text="--")
