@@ -6,6 +6,7 @@ from liftPanel import *
 from requestArrow import *
 from display import *
 from alertBox import *
+from testing import *
 
 screen_width = 0
 screen_height = 0
@@ -20,6 +21,7 @@ class ElevatorApp():
         self.root.title("Elevator Simulation System")
         self.canvas = Canvas(self.root, width = screen_width, height = screen_height, bg = "white")
         self.canvas.pack()
+        self.testing = Testing(self)
         
         #Vertical Lines
         for i in range(5):
@@ -37,13 +39,6 @@ class ElevatorApp():
         
         #liftPanelOuterBoxes
         self.draw_panels(self.canvas)
-
-        #alertBoxes
-
-        Alert(1200, 610, 1400, 750, self.canvas,self,1) 
-        Alert(1500, 610, 1700, 750, self.canvas,self,2)
-        Alert(1200, 770, 1400, 910, self.canvas,self,3)
-        Alert(1500, 770, 1700, 910, self.canvas,self,4)
         
         #draw Alert Boxes
         self.draw_alert_box()
@@ -53,6 +48,10 @@ class ElevatorApp():
 
         #draw Display Panel
         self.draw_display(self.canvas)
+        self.counter = 10
+
+        self.testing.test1()
+        #self.testing.test2()
         
     def draw_alert_box(self):
         self.alert_box_list = []
@@ -98,6 +97,8 @@ class ElevatorApp():
 
         self.root.after(10,self.simulate)
 
+
+
     def floorRequest(self,floor_number,direction):
         print "Request for floor number "+str(floor_number)+" has been made"
 
@@ -108,19 +109,19 @@ class ElevatorApp():
                 assigned_elevator = lift
                 lift.addFloorRequest(floor_number,direction)
                 print "Lift on the same floor as requested " + str(lift.lift_number)
-                return
+                return lift.lift_number
 
         for lift in self.lift_list:
             if (lift.state == "moving" or lift.state == "opening" or lift.state == "closing" or lift.state == "open") and lift.direction == "up" and lift.curr_floor < floor_number and not lift.overLoaded:
                 assigned_elevator = lift
                 lift.addFloorRequest(floor_number, direction)
                 print "This lift is on the way and picked up other passengers too "+ str(lift.lift_number)
-                return
+                return lift.lift_number
             elif (lift.state == "moving" or lift.state == "opening" or lift.state == "closing" or lift.state == "open") and lift.direction == "down" and lift.curr_floor > floor_number and not lift.overLoaded:
                 assigned_elevator = lift
                 lift.addFloorRequest(floor_number, direction)
                 print "This lift is moving and on the way catch up other persons too " + str(lift.lift_number)
-                return
+                return lift.lift_number
 
         min_distance = 10
         
@@ -128,12 +129,13 @@ class ElevatorApp():
             if lift.state == "idle":
                 if abs(lift.curr_floor - floor_number)<min_distance and not lift.overLoaded:
                     assigned_elevator = lift
-                    min_distance = lift.curr_floor - floor_number
+                    min_distance = abs(lift.curr_floor - floor_number)
+                #print min_distance
 
         if not(assigned_elevator == None):
             assigned_elevator.addFloorRequest(floor_number,direction)
             print "All lift were idle so nearest lift is find out and send "+ str(assigned_elevator.lift_number)
-            return
+            return assigned_elevator.lift_number
 
         min_person = 10000000000
         if assigned_elevator == None:
@@ -145,7 +147,7 @@ class ElevatorApp():
         if not(assigned_elevator == None):
             assigned_elevator.addFloorRequest(floor_number,direction)
             print "All lift were full so lift with minimum number of person was picked and assigined "+ str(assigned_elevator.lift_number)
-            return
+            return assigned_elevator.lift_number
 
 
 def main():
@@ -158,8 +160,9 @@ def main():
     screen_width = root.winfo_screenwidth()
     screen_height = root.winfo_screenheight()
     root.wm_geometry("%dx%d+%d+%d" % (screen_width, screen_height, posx, posy))
-    app = ElevatorApp(root)
+    app = ElevatorApp(root)  
     app.simulate()
+
     root.mainloop()
 
 

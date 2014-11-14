@@ -68,29 +68,57 @@ class Lift():
     def checkRequestQueue(self):
         #print self.state + str(self.lift_number)
         if self.state == "idle":
-            for i in range(11):
-                if self.request_queue[i] == 1 and self.curr_floor<=i and not self.overLoaded:
-                    self.destination = i
-                    self.vel = -self.lift_speed
-                    self.direction = "up"
-                    self.state = "moving"
-                    break
-                elif self.request_queue[i] == 1 and self.curr_floor>i and not self.overLoaded:
-                    self.destination = i
-                    self.vel = self.lift_speed
-                    self.direction = "down"
-                    self.state = "moving"
-                    break
-            
 
+            if self.direction=="up":
+                for i in range(11):
+                    if self.request_queue[i] == 1 and self.curr_floor<=i and not self.overLoaded:
+                        self.destination = i
+                        self.vel = -self.lift_speed
+                        self.direction = "up"
+                        self.state = "moving"
+                        break
+                    elif self.request_queue[i] == 1 and self.curr_floor>i and not self.overLoaded:
+                        self.destination = i
+                        self.vel = self.lift_speed
+                        self.direction = "down"
+                        self.state = "moving"
+                        break
+            else:
+                for i in range(10):
+                    if self.request_queue[10-i] == 1 and self.curr_floor<=10-i and not self.overLoaded:
+                        self.destination = 10-i
+                        self.vel = -self.lift_speed
+                        self.direction = "up"
+                        self.state = "moving"
+                        break
+                    elif self.request_queue[10-i] == 1 and self.curr_floor>10-i and not self.overLoaded:
+                        self.destination = 10-i
+                        self.vel = self.lift_speed
+                        self.direction = "down"
+                        self.state = "moving"
+                        break
+
+            
         elif self.state == "moving":
-            for i in range(11):
-                if self.request_queue[i] == 1 and self.direction == "up" and self.curr_floor<=i:
-                    self.destination = i
-                    break
-                elif self.request_queue[i] == 1 and self.direction == "down" and self.curr_floor>=i:
-                    self.destination = i
-                    break
+            if self.direction == "up":
+
+                for i in range(11):
+                    if self.request_queue[i] == 1 and self.direction == "up" and self.curr_floor<=i:
+                        self.destination = i
+                        break
+                    elif self.request_queue[i] == 1 and self.direction == "down" and self.curr_floor>=i:
+                        self.destination = i
+                        break
+
+            else:
+                for i in range(10):
+                    if self.request_queue[10-i] == 1 and self.direction == "up" and self.curr_floor<=10-i:
+                        self.destination = 10-i
+                        break
+                    elif self.request_queue[10-i] == 1 and self.direction == "down" and self.curr_floor>=10-i:
+                        self.destination = 10-i
+                        break
+
 
     def checkDestination(self):
         self.curr_floor = float(10-float((self.y)/108))
@@ -104,6 +132,8 @@ class Lift():
             self.request_queue[self.destination] = 0
             self.state = "opening"
             self.vel = 0
+            if self.destination==10:
+                self.direction = "down"
         
 
     def moveLift(self):
